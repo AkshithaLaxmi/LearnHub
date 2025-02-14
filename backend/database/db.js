@@ -1,8 +1,8 @@
-const { Schema, moongoose } = require("mongoose");
+const { Schema, default:moongoose } = require("mongoose");
 const ObjectId = Schema.Types.ObjectId;
 
 const userSchema = new Schema({
-    email:{type:String,required:true,unique:true},
+    email:{type:String,required:true},
     password:String,
     firstName:String,
     lastName:String,

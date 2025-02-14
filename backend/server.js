@@ -6,6 +6,7 @@ const { userRouter } = require('./routes/user');
 const { adminRouter } = require('./routes/admin');
 const Connection = require('./config');
 const app = express();
+app.use(express.json());
 
 Connection();
 
