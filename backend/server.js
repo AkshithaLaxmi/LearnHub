@@ -1,31 +1,18 @@
 const express = require('express');
-const app = express();
 require('dotenv').config();
 const PORT = process.env.PORT || 5000;
-const { createUserRoutes } = require('./user');
-const { createCourseRoutes } = require('./course');
+const { courseRouter } = require('./routes/course');
+const { userRouter } = require('./routes/user');
+const { adminRouter } = require('./routes/admin');
+const Connection = require('./config');
+const app = express();
 
-createUserRoutes(app);
-createCourseRoutes(app);
-// app.post('/user/signup',(req,res)=>{
+Connection();
 
-// })
+app.use("/api/v1/user",userRouter);
+app.use("/api/v1/course",courseRouter);
+app.use("/api/v1/admin",adminRouter);
 
-// app.post('/user/signin',(req,res)=>{
-
-// })
-
-// app.get('/user/purchases',(req,res)=>{
-    
-// })
-
-// app.post('/course/purchase',(req,res)=>{
-
-// })
-
-// app.get('/course/preview',(req,res)=>{
-
-// })
 
 app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);
