@@ -1,0 +1,22 @@
+{
+  "name": "courcesellingapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "frontend": "cd frontend && npm run dev",
+    "backend": "cd backend && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rxhul18/CourseSelling.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rxhul18/CourseSelling/issues"
+  },
+  "homepage": "https://github.com/rxhul18/CourseSelling#readme",
+  "description": ""
+}
