@@ -6,6 +6,7 @@ const userSchema = new Schema({
     password:String,
     firstName:String,
     lastName:String,
+    role:{type:String,default:"user"}
 })
 
 const adminSchema = new Schema({
@@ -13,6 +14,7 @@ const adminSchema = new Schema({
     password:String,
     firstName:String,
     lastName:String,
+    role:{type:String,default:"admin"}
 })
 
 const courseSchema = new Schema({
