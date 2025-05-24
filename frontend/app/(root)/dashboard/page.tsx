@@ -85,9 +85,7 @@ export default function DashboardPage() {
                     setPublishedCourses(res.data?.courses || []);
                 }
             } catch (err) {
-                toast.error("Failed to fetch published courses", {
-                    id: "fetch-published-courses",
-                });
+                throw new Error("Failed to fetch published courses");
             }
         }
         publisedCourses();

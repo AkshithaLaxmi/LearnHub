@@ -57,59 +57,53 @@ export default function LoginPage() {
             toast.loading("Loginng in as user", {
                 id: "login"
             })
-            await axios.post(process.env.NEXT_PUBLIC_API_URL + "/api/v1/user/signin", {
-                email,
-                password,
-            }, { withCredentials: true })
-                .then((response) => {
-                    console.log(response.status)
-                    if (response.status === 200) {
-                        toast.success("Login successful", {
-                            description: `Welcome back, ${email}!`,
-                            id: "login"
-                        })
+            try {
+                const response = await axios.post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/signin`,
+                    { email, password },
+                    { withCredentials: true }
+                );
+
+                if (response.status === 200) {
+                    toast.success("Login successful", {
+                        description: `Welcome back, ${email}!`,
+                        id: "login",
+                    });
+
+                    setTimeout(() => {
                         router.push("/dashboard");
-                    } else {
-                        toast.error("Login failed", {
-                            id: "login"
-                        })
-                    }
-                })
-                .catch((error) => {
-                    if (error.response) {
-                        toast.error(`Error: ${error.response.data.message}`, {
-                            id: "login"
-                        })
-                    }
-                })
+                    }, 500);
+                }
+            } catch (error) {
+                toast.error("Login failed", {
+                    id: "login"
+                });
+                throw error;
+            }
         } else {
             toast.loading("Loginng in as admin", {
                 id: "adminlogin"
             })
-            axios.post(process.env.NEXT_PUBLIC_API_URL + "/api/v1/admin/signin", {
-                email,
-                password,
-            },{ withCredentials: true })
-                .then((response) => {
-                    if (response.status === 200) {
-                        toast.success("Login successful", {
-                            description: `Welcome back, ${email}!`,
-                            id: "adminlogin"
-                        })
+            try {
+                const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/api/v1/admin/signin", {
+                    email,
+                    password,
+                }, { withCredentials: true })
+                if (res.status === 200) {
+                    toast.success("Admin login successful", {
+                        description: `Welcome back, ${email}!`,
+                        id: "adminlogin"
+                    });
+                    setTimeout(() => {
                         router.push("/dashboard");
-                    } else {
-                        toast.error("Adminlogin failed", {
-                            id: "adminlogin"
-                        })
-                    }
+                    }, 500);
+                }
+            } catch (error) {
+                toast.error("Adminlogin failed", {
+                    id: "adminlogin"
                 })
-                .catch((error) => {
-                    if (error.response) {
-                        toast.error(`Error: ${error.response.data.message}`, {
-                            id: "adminlogin"
-                        })
-                    }
-                })
+                throw error;
+            }
         }
     }
 
