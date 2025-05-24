@@ -164,7 +164,7 @@ export default function DashboardPage() {
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Button className="min-w-full hover:bg-black hover:text-white" onClick={handleLogout}>
+                                    <Button className="min-w-full hover:bg-black hover:text-white focus:bg-black focus:text-white" onClick={handleLogout}>
                                         <LogOut className="size-4" /> Logout
                                     </Button>
                                 </SidebarMenuButton>

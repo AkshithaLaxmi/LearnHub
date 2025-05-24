@@ -22,11 +22,9 @@ import Footer from "@/components/footer";
 import Logo from "@/components/logo";
 import { useAuth } from "@/lib/authContext";
 import { redirect } from "next/navigation";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
 
-    const router = useRouter();
     const { user, loading } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -71,7 +69,7 @@ export default function LoginPage() {
                     });
 
                     setTimeout(() => {
-                        router.push("/dashboard");
+                        window.location.reload();
                     }, 500);
                 }
             } catch (error) {
@@ -95,7 +93,7 @@ export default function LoginPage() {
                         id: "adminlogin"
                     });
                     setTimeout(() => {
-                        router.push("/dashboard");
+                        window.location.reload();
                     }, 500);
                 }
             } catch (error) {
@@ -133,7 +131,7 @@ export default function LoginPage() {
                                 <div className="flex items-center">
                                     <Label htmlFor="password">Password</Label>
                                 </div>
-                                <Input id="password" type="password" required onChange={(e) => (setPassword(e.target.value))} />
+                                <Input id="password" type="password" required onChange={(e) => (setPassword(e.target.value))} placeholder="Rahuhl1234"/>
                                 <Button variant="ghost" size="icon" className="absolute bottom-1 right-1 h-7 w-7">
                                     <Eye className="size-4" />
                                     <span className="sr-only">Toggle password visibility</span>
