@@ -4,43 +4,31 @@ const adminRouter = Router();
 const JWT_SECRET = process.env.ADMINJWT_SECRET;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { default: adminMiddleware } = require("../middleware/adminMiddeware");
+const adminMiddleware = require("../middleware/adminMiddeware");
 
 adminRouter.post("/signup", async function (req, res) {
   const { email, password, firstName, lastName } = req.body;
   if (!email || !password || !firstName || !lastName) {
-    res.json(
-      {
-        message: "Please provide all the fields",
-      },
-      400
-    );
-    return;
+    return res.status(400).json({
+      message: "Please provide all the fields",
+    });
   }
-  const hasedPassword = await bcrypt.hash(password, 5);
+  const hashedPassword = await bcrypt.hash(password, 5);
   try {
     await adminModel.create({
       email: email,
-      password: hasedPassword,
+      password: hashedPassword,
       firstName: firstName,
       lastName: lastName,
     });
-    res.json(
-      {
-        message: "Admin Signup successful",
-      },
-      201
-    );
-    return;
+    return res.status(201).json({
+      message: "Admin Signup successful",
+    });
   } catch (error) {
-    res.json(
-      {
-        message: "Admin Signup failed",
-        error,
-      },
-      400
-    );
-    return;
+    return res.status(400).json({
+      message: "Admin Signup failed",
+      error: error.message,
+    });
   }
 });
 
@@ -51,13 +39,9 @@ adminRouter.post("/signin", async function (req, res) {
   }
   const admin = await adminModel.findOne({ email: email });
   if (!admin) {
-    res.json(
-      {
-        message: "Admin not found",
-      },
-      204
-    );
-    return;
+    return res.status(404).json({
+      message: "Admin not found",
+    });
   }
   const comparePassword = await bcrypt.compare(password, admin.password);
   if (!comparePassword) {
@@ -80,17 +64,15 @@ adminRouter.post("/signin", async function (req, res) {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    // sameSite: "strict",
+    sameSite: "strict",
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
   console.log("Signin successful", email);
-  // res.header("token", token);
   return res.status(200).json({ message: "Signin successful" });
 });
 
-adminRouter.use(adminMiddleware);
-
-adminRouter.post("/course", async function (req, res) {
+// Protected routes
+adminRouter.post("/course", adminMiddleware, async function (req, res) {
   const adminId = req.adminId;
   const { title, description, imageUrl, price } = req.body;
 
@@ -117,10 +99,11 @@ adminRouter.post("/course", async function (req, res) {
   });
 });
 
-adminRouter.put("/course", async function (req, res) {
-  const { courseId, title, description, price, image, creatorId } = req.body;
+adminRouter.put("/course", adminMiddleware, async function (req, res) {
+  const { courseId, title, description, price, image } = req.body;
   const adminId = req.adminId;
-  const course = await courseModel.updateOne(
+  
+  const course = await courseModel.findOneAndUpdate(
     {
       _id: courseId,
       creatorId: adminId,
@@ -130,11 +113,19 @@ adminRouter.put("/course", async function (req, res) {
       description,
       price,
       image,
-    }
+    },
+    { new: true }
   );
-  res.json({
+
+  if (!course) {
+    return res.status(404).json({
+      message: "Course not found or you don't have permission to update it"
+    });
+  }
+
+  return res.status(200).json({
     message: "Course updated successfully",
-    courseId: course._id,
+    course
   });
 });
 
@@ -145,24 +136,31 @@ adminRouter.get("/course/bulk", adminMiddleware, async function (req, res) {
     creatorId: adminId,
   });
 
-  res.json({
-    message: "Course updated",
+  return res.status(200).json({
+    message: "Courses retrieved successfully",
     courses,
   });
 });
 
-adminRouter.delete("/course", async function (req, res) {
-  const { courseId } = req;
+adminRouter.delete("/course", adminMiddleware, async function (req, res) {
+  const { courseId } = req.body;
+  const adminId = req.adminId;
 
-  const course = await courseModel.deleteOne({
+  const course = await courseModel.findOneAndDelete({
     _id: courseId,
+    creatorId: adminId
   });
 
-  res.json({
+  if (!course) {
+    return res.status(404).json({
+      message: "Course not found or you don't have permission to delete it"
+    });
+  }
+
+  return res.status(200).json({
     message: "Course deleted successfully",
     courseId: course._id,
   });
-  return;
 });
 
 module.exports = {

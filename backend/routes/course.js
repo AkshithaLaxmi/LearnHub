@@ -1,10 +1,10 @@
 const { Router } = require("express");
-const { default: userMiddlware } = require("../middleware/userMiddleware");
+const userMiddleware = require("../middleware/userMiddleware");
 const { purchaseModel, courseModel } = require("../database/db");
-const { default: adminMiddleware } = require("../middleware/adminMiddeware");
+const adminMiddleware = require("../middleware/adminMiddeware");
 const courseRouter = Router();
 
-courseRouter.post("/purchase", userMiddlware, async(req, res) => {
+courseRouter.post("/purchase", userMiddleware, async(req, res) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
 
@@ -17,14 +17,12 @@ courseRouter.post("/purchase", userMiddlware, async(req, res) => {
   }
 
   await purchaseModel.create({ userId, courseId });
-  res.json({
+  res.status(201).json({
     message: "Course purchased",
-  }, 201);
-  
-  return;
+  });
 });
 
-courseRouter.get("/purchased", userMiddlware, async(req, res) => {
+courseRouter.get("/purchased", userMiddleware, async(req, res) => {
   const userId = req.userId;
   const purchases = await purchaseModel.find({ userId }).populate("courseId");
   if (!purchases) {
@@ -33,16 +31,16 @@ courseRouter.get("/purchased", userMiddlware, async(req, res) => {
     });
   }
 
-  res.json({
+  res.status(200).json({
     message: "Purchased courses",
     purchases
-  },200);
+  });
 });
 
-courseRouter.get("/preview",userMiddlware, async(req, res) => {
+courseRouter.get("/preview", userMiddleware, async(req, res) => {
   const courses = await courseModel.find({}).sort({ _id: -1 });
-  res.json({
-    message:"Courses",
+  res.status(200).json({
+    message: "Courses",
     courses
   });
 });
@@ -57,10 +55,10 @@ courseRouter.get("/launched", adminMiddleware, async(req, res) => {
     });
   }
 
-  res.json({
+  res.status(200).json({
     message: "Launched courses",
     courses
-  },200);
+  });
 });
 
 module.exports = {

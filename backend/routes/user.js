@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const userRouter = Router();
 const JWT_SECRET = process.env.USERJWT_SECRET;
 const jwt = require("jsonwebtoken");
-const { default: userMiddlware } = require("../middleware/userMiddleware");
+const userMiddleware = require("../middleware/userMiddleware");
 
 userRouter.post("/signup", async (req, res) => {
   const { email, password, firstName, lastName } = req.body;
@@ -76,13 +76,19 @@ userRouter.post("/signin", async (req, res) => {
   return res.status(200).json({ message: "Signin successful" });
 });
 
-userRouter.get("/purchases", userMiddlware, async (req, res) => {
-  const courses = await purchaseModel.find({ userId: req.userId });
-
-  res.json({
-    message: "Courses purchased",
-    courses,
-  });
+userRouter.get("/purchases", userMiddleware, async (req, res) => {
+  try {
+    const courses = await purchaseModel.find({ userId: req.userId }).populate("courseId");
+    res.status(200).json({
+      message: "Courses purchased",
+      courses,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error fetching purchases",
+      error: err.message
+    });
+  }
 });
 
 module.exports = {

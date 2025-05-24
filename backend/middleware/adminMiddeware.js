@@ -1,8 +1,8 @@
-import jwt from "jsonwebtoken";
-import { adminModel } from "../database/db";
+const jwt = require("jsonwebtoken");
+const { adminModel } = require("../database/db");
 const ADMINJWT_SECRET = process.env.ADMINJWT_SECRET;
 
-export default async function adminMiddleware(req, res, next) {
+async function adminMiddleware(req, res, next) {
   const token = req.cookies.token; // prefer cookies for secure auth
   if (!token) return res.status(401).json({ message: "Unauthorized" });
 
@@ -24,3 +24,5 @@ export default async function adminMiddleware(req, res, next) {
     return res.status(403).json({ message: "Invalid token" });
   }
 }
+
+module.exports = adminMiddleware;

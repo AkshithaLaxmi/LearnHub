@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 const USERJWT_SECRET = process.env.USERJWT_SECRET;
 
-export default async function userMiddlware(req, res, next) {
+async function userMiddleware(req, res, next) {
   const token = req.cookies.token;
   if (!token) return res.status(401).json({ message: "Unauthorized" });
 
@@ -9,11 +9,13 @@ export default async function userMiddlware(req, res, next) {
     const decoded = jwt.verify(token, USERJWT_SECRET);
     if (!decoded) {
       return res.status(401).json({ message: "Unauthorized" });
-    } else {
-      next();
     }
+    req.userId = decoded.id;
+    next();
   } catch (err) {
-    console.error("Admin token verification failed:", err);
+    console.error("User token verification failed:", err);
     return res.status(403).json({ message: "Invalid token" });
   }
 }
+
+module.exports = userMiddleware;
