@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import Link from "next/link"
-import { Eye, GraduationCap } from "lucide-react"
+import { Eye, GraduationCap, Loader2 } from "lucide-react"
 import {
     Select,
     SelectContent,
@@ -18,13 +18,30 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { toast } from "sonner"
 import axios from "axios";
+import Footer from "@/components/footer";
+import Logo from "@/components/logo";
+import { useAuth } from "@/lib/authContext";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
 
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [role, setRole] = useState("")
+    const { user, loading } = useAuth();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [role, setRole] = useState("");
 
+    if (!loading && user) {
+        redirect("/dashboard");
+    }
+
+    if (loading) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Loader2 className="mr-2 size-6 animate-spin" />
+                <p className="text-lg font-semibold">Loading...</p>
+            </div>
+        )
+    }
     async function handleLogin() {
         if (email === "" || password === "" || role === "") {
             toast.error("Please fill in all fields")
@@ -35,13 +52,13 @@ export default function LoginPage() {
             return
 
         } else if (role === "user") {
-            toast("Loginng in as user", {
+            toast.loading("Loginng in as user", {
                 id: "login"
             })
             await axios.post(process.env.NEXT_PUBLIC_API_URL + "/api/v1/user/signin", {
                 email,
                 password,
-            },{withCredentials: true})
+            }, { withCredentials: true })
                 .then((response) => {
                     console.log(response.status)
                     if (response.status === 200) {
@@ -49,6 +66,7 @@ export default function LoginPage() {
                             description: `Welcome back, ${email}!`,
                             id: "login"
                         })
+                        window.location.href = "/dashboard";
                     } else {
                         toast.error("Login failed", {
                             id: "login"
@@ -63,7 +81,7 @@ export default function LoginPage() {
                     }
                 })
         } else {
-            toast("Loginng in as admin", {
+            toast.loading("Loginng in as admin", {
                 id: "adminlogin"
             })
             axios.post(process.env.NEXT_PUBLIC_API_URL + "/api/v1/admin/signin", {
@@ -76,6 +94,7 @@ export default function LoginPage() {
                             description: `Welcome back, ${email}!`,
                             id: "adminlogin"
                         })
+                        window.location.href = "/dashboard";
                     } else {
                         toast.error("Adminlogin failed", {
                             id: "adminlogin"
@@ -97,8 +116,8 @@ export default function LoginPage() {
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex justify-center">
                 <div className="container flex h-16 items-center justify-between">
                     <Link href="/" className="flex items-center gap-2">
-                        <GraduationCap className="size-6" />
-                        <span className="text-xl font-bold">LearnHub</span>
+                        <GraduationCap className="size-9" />
+                        <Logo />
                     </Link>
                 </div>
             </header>
@@ -151,14 +170,7 @@ export default function LoginPage() {
                     </CardContent>
                 </Card>
             </main>
-            <footer className="w-full border-t py-6 md:py-0">
-                <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-                    <div className="flex items-center gap-2">
-                        <GraduationCap className="size-6" />
-                        <p className="text-sm text-muted-foreground">© 2024 LearnHub. All rights reserved.</p>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     )
 }

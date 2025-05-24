@@ -9,9 +9,12 @@ const { default: adminMiddleware } = require("../middleware/adminMiddeware");
 adminRouter.post("/signup", async function (req, res) {
   const { email, password, firstName, lastName } = req.body;
   if (!email || !password || !firstName || !lastName) {
-    res.json({
-      message: "Please provide all the fields",
-    },400);
+    res.json(
+      {
+        message: "Please provide all the fields",
+      },
+      400
+    );
     return;
   }
   const hasedPassword = await bcrypt.hash(password, 5);
@@ -22,68 +25,93 @@ adminRouter.post("/signup", async function (req, res) {
       firstName: firstName,
       lastName: lastName,
     });
-    res.json({
-      message: "Admin Signup successful",
-    },201);
+    res.json(
+      {
+        message: "Admin Signup successful",
+      },
+      201
+    );
     return;
   } catch (error) {
-    res.json({
-      message: "Admin Signup failed",
-      error,
-    },400);
+    res.json(
+      {
+        message: "Admin Signup failed",
+        error,
+      },
+      400
+    );
     return;
   }
 });
 
 adminRouter.post("/signin", async function (req, res) {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: "Please provide all fields" });
+  }
   const admin = await adminModel.findOne({ email: email });
   if (!admin) {
-    res.json({
-      message: "Admin not found",
-    },204);
+    res.json(
+      {
+        message: "Admin not found",
+      },
+      204
+    );
     return;
   }
   const comparePassword = await bcrypt.compare(password, admin.password);
-  if (comparePassword) {
-    const token = jwt.sign(
-      {
-        id: admin._id,
-        role: admin.role,
-      },
-      JWT_SECRET
-    );
-    res.header("token", token);
-    res.json({
-      message: "Admin Signin successful",
-      token: token,
-    },200);
-    return;
-  } else {
-    res.json({
-      message: "Admin Signin failed, Invalid Credentials",
-    },400);
-    return;
+  if (!comparePassword) {
+    return res
+      .status(401)
+      .json({ message: "Signin failed, Invalid Credentials" });
   }
+  const token = jwt.sign(
+    {
+      id: admin._id,
+      role: admin.role,
+    },
+    JWT_SECRET,
+    {
+      expiresIn: "1d",
+    }
+  );
+
+  // Set token in HTTP-only cookie
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    // sameSite: "strict",
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+  });
+  console.log("Signin successful", email);
+  // res.header("token", token);
+  return res.status(200).json({ message: "Signin successful" });
 });
 
 adminRouter.use(adminMiddleware);
 
 adminRouter.post("/course", async function (req, res) {
   const adminId = req.adminId;
-
   const { title, description, imageUrl, price } = req.body;
 
-  // creating a web3 saas in 6 hours
+  if (!title || !description || !imageUrl || !price) {
+    return res.status(400).json({ message: "Please provide all the fields" });
+  }
+
+  const courseExists = await courseModel.findOne({ title });
+  if (courseExists) {
+    return res.status(400).json({ message: "Course already exists" });
+  }
+
   const course = await courseModel.create({
-    title: title,
-    description: description,
-    imageUrl: imageUrl,
-    price: price,
+    title,
+    description,
+    image: imageUrl,
+    price,
     creatorId: adminId,
   });
 
-  res.json({
+  return res.status(201).json({
     message: "Course created",
     courseId: course._id,
   });

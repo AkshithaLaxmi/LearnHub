@@ -1,5 +1,6 @@
+"use client"
 import Link from "next/link"
-import { ArrowRight, BookOpen, CheckCircle, GraduationCap, Users } from "lucide-react"
+import { ArrowRight, BookOpen, CheckCircle, GraduationCap, Loader2, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import heroImage from "@/public/images/heroImage.png"
 import WebDev from "@/public/images/WebDev.png"
@@ -7,15 +8,31 @@ import DataScience from "@/public/images/DataScience.png"
 import UiUx from "@/public/images/UI:ux.jpg"
 import Image from "next/image"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useAuth } from "@/lib/authContext"
+import { redirect } from "next/navigation"
+import Footer from "@/components/footer"
+import Logo from "@/components/logo"
 
 export default function LandingPage() {
+    const { user, loading } = useAuth();
+    if (!loading && user) {
+        redirect("/dashboard");
+    }
+    if (loading) return (
+        <div className="flex h-screen items-center justify-center">
+            <Loader2 className="mr-2 size-6 animate-spin" />
+            <p className="text-lg font-semibold">Loading...</p>
+        </div>
+    );
+
+
     return (
         <div className="flex min-h-dvh flex-col">
             <header className="sticky top-0 z-50 min-w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex justify-center">
                 <div className="container flex h-16 items-center justify-between">
                     <div className="flex items-center gap-2">
                         <GraduationCap className="size-9" />
-                        <span className="text-xl font-semibold">LearnHub</span>
+                        <Logo />
                     </div>
                     <nav className="hidden md:flex items-center gap-6">
                         <Link href="#courses" className="text-sm font-medium hover:underline underline-offset-4">
@@ -31,7 +48,7 @@ export default function LandingPage() {
                             Pricing
                         </Link>
                     </nav>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                         <Link href="/login">
                             <Button variant="outline" size="sm">
                                 Log in
@@ -112,7 +129,7 @@ export default function LandingPage() {
                                         <h3 className="text-xl font-bold">{course.title}</h3>
                                         <p className="line-clamp-2 mt-2 text-muted-foreground">{course.description}</p>
                                         <div className="mt-4 flex items-center justify-between">
-                                            <p className="font-bold">₹ {course.price}</p>
+                                            <p className="font-bold">₹{course.price}</p>
                                             <Link href="/login">
                                                 <Button variant="secondary" size="sm">
                                                     Enroll Now
@@ -229,25 +246,7 @@ export default function LandingPage() {
                     </div>
                 </section>
             </main>
-            <footer className="min-w-full border-t py-6 md:py-0 justify-center flex max-w-[90%]">
-                <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-                    <div className="flex items-center gap-2">
-                        <GraduationCap className="size-6" />
-                        <p className="text-sm text-muted-foreground">© 2024 LearnHub. All rights reserved.</p>
-                    </div>
-                    <div className="flex gap-4">
-                        <Link href="#" className="text-sm text-muted-foreground hover:underline underline-offset-4">
-                            Terms
-                        </Link>
-                        <Link href="#" className="text-sm text-muted-foreground hover:underline underline-offset-4">
-                            Privacy
-                        </Link>
-                        <Link href="#" className="text-sm text-muted-foreground hover:underline underline-offset-4">
-                            Contact
-                        </Link>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     )
 }
