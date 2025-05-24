@@ -7,19 +7,21 @@ const { adminRouter } = require("./routes/admin");
 const Connection = require("./config");
 const app = express();
 const cors = require("cors");
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const { userModel, adminModel } = require("./database/db");
 const JWT_SECRET = process.env.USERJWT_SECRET;
 
 app.use(express.json());
-app.use(cookieParser()); 
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true, 
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 async function verifyTokenWithRole(req, res, next) {
   const token = req.cookies.token;
@@ -61,7 +63,8 @@ app.get("/api/v1/me", verifyTokenWithRole, (req, res) => {
 app.post("/api/v1/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production"
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
   });
   return res.status(200).json({ message: "Logged out successfully" });
 });

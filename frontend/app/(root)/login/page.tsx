@@ -22,9 +22,11 @@ import Footer from "@/components/footer";
 import Logo from "@/components/logo";
 import { useAuth } from "@/lib/authContext";
 import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
 
+    const router = useRouter();
     const { user, loading } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -66,7 +68,7 @@ export default function LoginPage() {
                             description: `Welcome back, ${email}!`,
                             id: "login"
                         })
-                        window.location.href = "/dashboard";
+                        router.push("/dashboard");
                     } else {
                         toast.error("Login failed", {
                             id: "login"
@@ -87,14 +89,14 @@ export default function LoginPage() {
             axios.post(process.env.NEXT_PUBLIC_API_URL + "/api/v1/admin/signin", {
                 email,
                 password,
-            })
+            },{ withCredentials: true })
                 .then((response) => {
                     if (response.status === 200) {
                         toast.success("Login successful", {
                             description: `Welcome back, ${email}!`,
                             id: "adminlogin"
                         })
-                        window.location.href = "/dashboard";
+                        router.push("/dashboard");
                     } else {
                         toast.error("Adminlogin failed", {
                             id: "adminlogin"
