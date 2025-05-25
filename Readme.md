@@ -1,4 +1,4 @@
-# LearnHub 🎓
+# LearnHub 🎓 - https://learnhub.rahulwtf.in/
 
 **LearnHub** is a full-stack course platform built with **Next.js**, **Tailwind CSS**, **MongoDB**, and **shadcn/ui**. It supports two user roles: **Admin** and **User**.
 
@@ -13,8 +13,8 @@
 - **UI:** [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/)
 - **Backend:** Next.js API Routes
 - **Database:** [MongoDB](https://www.mongodb.com/)
-- **Authentication:** [NextAuth.js](https://next-auth.js.org/) (with GitHub or credentials)
-- **Deployment:** [Vercel](https://vercel.com/) (recommended)
+- **Authentication:** Builed Custom Auth with in _ExpressJS_ with _MongoDB_
+- **Deployment:** [Vercel](https://vercel.com/)
 
 ---
 
@@ -33,6 +33,16 @@
 
 ---
 
+## Screenshots
+
+### User dashboard
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/7081163a-0e35-4ede-9395-4fb11aac2379" />
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/7b71326c-0ed1-4e8e-a33d-550e77c4e0e9" />
+
+### Admin dashboard
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/e483c68d-8677-418f-8a64-9cad212acfe9" />
+
+---
 ## 🧑‍💻 Getting Started
 
 ### 1. Clone the Repository
