@@ -9,7 +9,7 @@ function Footer() {
                 <div className='flex items-center gap-4'>
                     <GraduationCap className='size-8 stroke-[1.5px]' />
                     <p className='text-sm text-muted-foreground font-normal'>
-                        Built with <span className='text-red-500 text-lg'>❤️</span> by <Link href={"https://rahulwtf.in"} className='underline font-semibold'>Rahul Sha(me)</Link>
+                        Built with <span className='text-red-500 text-lg'>❤️</span> by <Link href={"https://rahulwtf.in"} className='underline font-semibold'>Rahul Shah(me)</Link>
                     </p>
                 </div>
 
