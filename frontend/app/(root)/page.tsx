@@ -29,7 +29,7 @@ export default function LandingPage() {
     return (
         <div className="flex min-h-dvh flex-col">
             <header className="sticky top-0 z-50 min-w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex justify-center">
-                <div className="container flex h-16 items-center justify-between">
+                <div className="container max-w-[90%] flex h-16 items-center justify-between">
                     <div className="flex items-center gap-2">
                         <GraduationCap className="size-9" />
                         <Logo />
