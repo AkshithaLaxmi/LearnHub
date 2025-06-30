@@ -1,3 +1,4 @@
+
 export type CourseType = {
     _id: string;
     title: string;
