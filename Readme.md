@@ -1,4 +1,4 @@
-# LearnHub 🎓 - https://learnhub.rahulwtf.in/
+#  LearnHub 🎓 - https://learnhub.rahulwtf.in/
 
 **LearnHub** is a full-stack course platform built with **Next.js**, **Tailwind CSS**, **MongoDB**, and **shadcn/ui**. It supports two user roles: **Admin** and **User**.
 
