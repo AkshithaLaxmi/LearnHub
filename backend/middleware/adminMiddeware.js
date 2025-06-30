@@ -1,3 +1,4 @@
+
 const jwt = require("jsonwebtoken");
 const { adminModel } = require("../database/db");
 const ADMINJWT_SECRET = process.env.ADMINJWT_SECRET;
